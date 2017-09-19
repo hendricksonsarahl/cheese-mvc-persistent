@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
- * Created by LaunchCode
+ * Created by LaunchCode and Sarah Hendrickson
  */
 @Entity
 public class Cheese {
@@ -61,4 +61,6 @@ public class Cheese {
     public Category getCategory() { return category; }
 
     public void setCategory(Category category) { this.category = category; }
+
+    public List<Menu> getMenus() { return menus; }
 }

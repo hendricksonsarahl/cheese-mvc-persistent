@@ -2,6 +2,7 @@ package org.launchcode.controllers;
 
 import org.launchcode.models.Category;
 import org.launchcode.models.Cheese;
+import org.launchcode.models.Menu;
 import org.launchcode.models.data.CategoryDao;
 import org.launchcode.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Created by LaunchCode
+ * Created by LaunchCode and Sarah Hendrickson
  */
+
 @Controller
 @RequestMapping("cheese")
 public class CheeseController {
@@ -69,11 +71,52 @@ public class CheeseController {
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
 
+        // When removing a cheese from list,
+        // find all menus that the cheese is in and
+        // remove the cheese in each
+        // Them, remove the cheese from the list
+
+        for (int cheeseId : cheeseIds) {
+            Cheese cheese = cheeseDao.findOne(cheeseId);
+            List<Menu> menus = cheese.getMenus();
+            for (Menu menu : menus) {
+                menu.removeItem(cheese);
+            }
+        }
         for (int cheeseId : cheeseIds) {
             cheeseDao.delete(cheeseId);
         }
 
-        return "redirect:";
+        return "redirect:/cheese";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method=RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable int cheeseId) {
+
+        Cheese cheeseToEdit = cheeseDao.findOne(cheeseId);
+
+        model.addAttribute("cheese", cheeseToEdit);
+        model.addAttribute("cheeseTypes", categoryDao.findAll());
+
+        return "cheese/edit";
+
+    }
+
+    @RequestMapping(value = "edit", method=RequestMethod.POST)
+    public String processEditCheeseForm(@RequestParam String name, @RequestParam String description,
+                                        @RequestParam int id, @RequestParam int category) {
+
+        Cheese cheeseToEdit = cheeseDao.findOne(id);
+        Category newCategory = categoryDao.findOne(category);
+
+        cheeseToEdit.setName(name);
+        cheeseToEdit.setDescription(description);
+        cheeseToEdit.setCategory(newCategory);
+
+        cheeseDao.save(cheeseToEdit);
+
+        return "redirect:/cheese";
+
     }
 
     @RequestMapping(value = "category/{categoryId}", method = RequestMethod.GET)

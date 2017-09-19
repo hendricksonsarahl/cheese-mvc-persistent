@@ -17,15 +17,20 @@ public class Menu {
     private int id;
 
     @NotNull
-    @Size(min = 3, max = 15)
+    @Size(min=3, max=15)
     private String name;
 
     @ManyToMany
-    private List<Cheese> cheeses = new ArrayList<>();
+    private List<Cheese> cheeses;
 
     // Adds an item to the cheeses list
     public void addItem(Cheese item) {
         cheeses.add(item);
+    }
+    // Removes an item from the cheeses list
+
+    public void removeItem(Cheese item) {
+        cheeses.remove(item);
     }
 
     // Default constructor to be used by Hibernate
@@ -41,11 +46,10 @@ public class Menu {
 
     public int getId() { return id; }
 
-    public void setId(int id) { this.id = id; }
-
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
 
     public List<Cheese> getCheeses() { return cheeses; }
+
 }
